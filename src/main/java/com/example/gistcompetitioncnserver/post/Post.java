@@ -1,5 +1,6 @@
 package com.example.gistcompetitioncnserver.post;
 
+import com.example.gistcompetitioncnserver.comment.Comment;
 import com.example.gistcompetitioncnserver.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -22,7 +24,8 @@ public class Post {
             name = "native",
             strategy = "native"
     )
-    private Long id;
+    @Column(name = "post_id")
+    private Long postId;
 
     private String title;
 
@@ -35,7 +38,11 @@ public class Post {
     private int accepted;
 
     //foreign key
-    private int user_id;
+    @Column(name = "user_id")
+    private int userId;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "commentId")
+    private List<Comment> comment;
 
 
 }
