@@ -27,7 +27,7 @@ out/
 !**/src/test/**/out/
 
 ### my ignore ###
-src/main/resources/application.properties
+/src/main/resources/application.properties
 
 ### NetBeans ###
 /nbproject/private/
