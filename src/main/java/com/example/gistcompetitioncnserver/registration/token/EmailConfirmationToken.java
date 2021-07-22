@@ -39,4 +39,11 @@ public class EmailConfirmationToken {
     )
     private User user;
 
+    public EmailConfirmationToken(String token,
+                                  LocalDateTime createdAt, LocalDateTime expiredAt, User user) {
+        this.token = token;
+        this.createdAt = createdAt;
+        this.expiredAt = expiredAt;
+        this.user = user;
+    }
 }
