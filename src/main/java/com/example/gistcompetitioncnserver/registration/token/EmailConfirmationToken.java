@@ -1,13 +1,19 @@
 package com.example.gistcompetitioncnserver.registration.token;
 
 import com.example.gistcompetitioncnserver.user.User;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+
+@Data
+@NoArgsConstructor
 @Entity
 public class EmailConfirmationToken {
+
     @Id
     @GeneratedValue(
             strategy= GenerationType.AUTO,

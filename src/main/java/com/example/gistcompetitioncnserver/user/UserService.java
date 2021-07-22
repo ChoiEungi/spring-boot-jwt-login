@@ -1,5 +1,7 @@
 package com.example.gistcompetitioncnserver.user;
 
+import com.example.gistcompetitioncnserver.login.LoginRequest;
+import com.example.gistcompetitioncnserver.login.jwt.JwtTokenProvider;
 import com.example.gistcompetitioncnserver.registration.token.EmailConfirmationToken;
 import com.example.gistcompetitioncnserver.registration.token.EmailConfirmationTokenService;
 import lombok.AllArgsConstructor;
@@ -15,14 +17,14 @@ import java.util.UUID;
 @AllArgsConstructor
 @Service
 public class UserService implements UserDetailsService {
+
     // find user once users login
-
-
     private final static String USER_NOT_FOUND_MSG =
             "user with email %s not found";
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EmailConfirmationTokenService emailConfirmationTokenService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public UserDetails loadUserByUsername(String email)
@@ -69,11 +71,22 @@ public class UserService implements UserDetailsService {
         // send email token to RegistrationService
         return token;
 
-
     }
 
     public int enableAppUser(String email) {
         return userRepository.enableAppUser(email);
+    }
+
+    public String loginUser(LoginRequest request){
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 회원입니다."));
+        if (!bCryptPasswordEncoder.encode(request.getPassword())
+                .matches(user.getPassword())){
+            throw new IllegalStateException("잘못된 비밀번호입니다.");
+        }
+        return jwtTokenProvider.createToken(user.getUsername(), user.getUserRole());
+
+
     }
 
 }

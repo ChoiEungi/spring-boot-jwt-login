@@ -1,5 +1,11 @@
 package com.example.gistcompetitioncnserver.user;
 
+import com.example.gistcompetitioncnserver.config.PasswordEncoder;
+import com.example.gistcompetitioncnserver.login.LoginRequest;
+import com.example.gistcompetitioncnserver.registration.RegistrationRequest;
+import com.example.gistcompetitioncnserver.registration.RegistrationService;
+import com.mysql.cj.log.Log;
+import lombok.AllArgsConstructor;
 import org.hibernate.EntityMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
@@ -16,14 +22,15 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-    @Autowired
-    private UserDaoService service;
+    private final UserDaoService service;
+    private final RegistrationService registrationService;
+    private final UserRepository userRepository;
+    private final UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
 
     @GetMapping("")
     public List<User> retrieveAllUsers(){
@@ -48,18 +55,36 @@ public class UserController {
 
     }
 
-    @PostMapping("")
-    public ResponseEntity<User> createUser(@RequestBody User user){
-
-        User savedUser = service.save(user);
-
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(savedUser)
-                .toUri();
-
-        return ResponseEntity.created(location).build();
+    @PostMapping("/registeration")
+    public String register(@RequestBody RegistrationRequest request){
+        return registrationService.register(request);
     }
+
+    //로그인 시도하려면 이렇게 해도?
+    @GetMapping(path = "/confirm")
+    public String confirm(@RequestParam("token") String token) {
+        return registrationService.confirmToken(token);
+        //Registrationservice로
+    }
+
+    @PostMapping(path = "/login")
+    public String login(@RequestBody LoginRequest request){
+        return userService.loginUser(request);
+    }
+
+
+//    @PostMapping("")
+//    public ResponseEntity<User> createUser(@RequestBody User user){
+//
+//        User savedUser = service.save(user);
+//
+//        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+//                .path("/{id}")
+//                .buildAndExpand(savedUser)
+//                .toUri();
+//
+//        return ResponseEntity.created(location).build();
+//    }
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id){

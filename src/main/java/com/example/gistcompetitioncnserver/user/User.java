@@ -1,5 +1,6 @@
 package com.example.gistcompetitioncnserver.user;
 
+import com.example.gistcompetitioncnserver.registration.token.EmailConfirmationToken;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,11 +14,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
-@NoArgsConstructor
 @EqualsAndHashCode
-@AllArgsConstructor
 @Data
 public class User implements UserDetails {
 
@@ -49,6 +49,21 @@ public class User implements UserDetails {
     private boolean locked = false;
 
     private boolean enabled = false;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "emailTokenId")
+    private List<EmailConfirmationToken> emailConfirmationTokens;
+
+    public User(String username, String email,
+                String userId, String userPassword, UserRole userRole) {
+        this.username = username;
+        this.email = email;
+        this.userId = userId;
+        this.userPassword = userPassword;
+        this.userRole = userRole;
+
+    }
+
+    // user detail in spring security
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

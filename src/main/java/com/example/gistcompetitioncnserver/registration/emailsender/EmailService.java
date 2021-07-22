@@ -30,7 +30,7 @@ public class EmailService implements EmailSender{
                 helper.setText(email, true);
                 helper.setTo(to); // email that we will send
                 helper.setSubject("Confirm your email");
-                helper.setFrom(email); // email sender that show client
+                helper.setFrom("choieungi@gm.gist.ac.kr"); // email sender that show client
                 mailSender.send(mimeMessage);
 
         }catch (MessagingException e) {
