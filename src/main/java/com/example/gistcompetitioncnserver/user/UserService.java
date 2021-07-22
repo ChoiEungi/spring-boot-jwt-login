@@ -24,7 +24,6 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EmailConfirmationTokenService emailConfirmationTokenService;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public UserDetails loadUserByUsername(String email)
@@ -77,16 +76,16 @@ public class UserService implements UserDetailsService {
         return userRepository.enableAppUser(email);
     }
 
-    public String loginUser(LoginRequest request){
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 회원입니다."));
-        if (!bCryptPasswordEncoder.encode(request.getPassword())
-                .matches(user.getPassword())){
-            throw new IllegalStateException("잘못된 비밀번호입니다.");
-        }
-        return jwtTokenProvider.createToken(user.getUsername(), user.getUserRole());
-
-
-    }
+//    public String loginUser(LoginRequest request){
+//        User user = userRepository.findByEmail(request.getEmail())
+//                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 회원입니다."));
+//        if (!bCryptPasswordEncoder.encode(request.getPassword())
+//                .matches(user.getPassword())){
+//            throw new IllegalStateException("잘못된 비밀번호입니다.");
+//        }
+//        return jwtTokenProvider.createToken(user.getUsername(), user.getUserRole());
+//
+//
+//    }
 
 }

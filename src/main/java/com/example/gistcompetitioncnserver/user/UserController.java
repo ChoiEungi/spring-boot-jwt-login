@@ -2,6 +2,7 @@ package com.example.gistcompetitioncnserver.user;
 
 import com.example.gistcompetitioncnserver.config.PasswordEncoder;
 import com.example.gistcompetitioncnserver.login.LoginRequest;
+import com.example.gistcompetitioncnserver.login.jwt.JwtTokenProvider;
 import com.example.gistcompetitioncnserver.registration.RegistrationRequest;
 import com.example.gistcompetitioncnserver.registration.RegistrationService;
 import com.mysql.cj.log.Log;
@@ -29,8 +30,8 @@ public class UserController {
     private final UserDaoService service;
     private final RegistrationService registrationService;
     private final UserRepository userRepository;
-    private final UserService userService;
-
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("")
     public List<User> retrieveAllUsers(){
@@ -69,7 +70,13 @@ public class UserController {
 
     @PostMapping(path = "/login")
     public String login(@RequestBody LoginRequest request){
-        return userService.loginUser(request);
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 회원입니다."));
+        if (!bCryptPasswordEncoder.encode(request.getPassword())
+                .matches(user.getPassword())){
+            throw new IllegalStateException("잘못된 비밀번호입니다.");
+        }
+        return jwtTokenProvider.createToken(user.getUsername(), user.getUserRole());
     }
 
 
