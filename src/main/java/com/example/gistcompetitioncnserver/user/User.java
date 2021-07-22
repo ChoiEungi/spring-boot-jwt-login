@@ -1,14 +1,12 @@
 package com.example.gistcompetitioncnserver.user;
 
-import com.example.gistcompetitioncnserver.post.Post;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -27,7 +25,6 @@ public class User {
     )
     private long id;
 
-
     private String username;
 
     private String email;
@@ -36,9 +33,11 @@ public class User {
     private String userId;
 
     @Column(name = "user_password")
+    @JsonIgnore
     private String userPassword;
 
-    private boolean enabled;
+    private UserRole userRole;
 
+    private boolean enabled;
 
 }
